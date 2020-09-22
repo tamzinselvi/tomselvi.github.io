@@ -5,12 +5,12 @@ import { Keys, useSteno, strokesToText, keysFromChars, keyToChar } from '../sten
 import { Stenograph } from './Stenograph.js';
 const entries = Object.keys(config.dictionaries[0]);
 
-const findRandomEntry = () => {
+const findRandomEntry = difficulty => {
   const randomEntry = entries[Math.round(Math.random() * (entries.length - 1))];
   const val = config.dictionaries[0][randomEntry];
 
-  if (randomEntry.indexOf('/') !== -1 || randomEntry.indexOf('-') !== -1) {
-    return findRandomEntry();
+  if (!new RegExp(`^[a-zA-Z]{${difficulty}}$`).test(randomEntry)) {
+    return findRandomEntry(difficulty);
   }
 
   return {
@@ -21,7 +21,9 @@ const findRandomEntry = () => {
 
 function App({}) {
   const [down, setDown] = useState({});
-  const [nextTarget, setNextTarget] = useState(findRandomEntry());
+  const [difficulty, setDifficulty] = useState(3);
+  const [nextTarget, setNextTarget] = useState(findRandomEntry(difficulty));
+  const [showTarget, setShowTarget] = useState(true);
   const {
     state,
     onKeyDown,
@@ -30,7 +32,7 @@ function App({}) {
   const targetText = state.strokes.length && strokesToText([state.strokes[state.strokes.length - 1]]) || "";
 
   if (nextTarget.text === targetText) {
-    setNextTarget(findRandomEntry());
+    setNextTarget(findRandomEntry(difficulty));
   }
 
   useEffect(() => {
@@ -93,13 +95,31 @@ function App({}) {
   const bottomRow = /*#__PURE__*/React.createElement("div", {
     className: "App-keys-row"
   }, [Keys.InitialA, Keys.InitialO, Keys.FinalE, Keys.FinalU].map(key => renderKey(key)));
+
+  const onChangeDifficulty = e => setDifficulty(parseInt(e.target.value));
+
+  const onChangeShowTarget = e => setShowTarget(e.target.checked);
+
   return /*#__PURE__*/React.createElement("div", {
     className: "App"
-  }, /*#__PURE__*/React.createElement("header", {
+  }, /*#__PURE__*/React.createElement("label", null, "difficulty"), " ", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("input", {
+    onChange: onChangeDifficulty,
+    type: "range",
+    min: "3",
+    max: "12",
+    value: difficulty
+  }), " ", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("label", null, "show target"), " ", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("input", {
+    onChange: onChangeShowTarget,
+    type: "checkbox",
+    min: "1",
+    max: "12",
+    checked: showTarget
+  }), " ", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("header", {
     className: "App-header"
   }, /*#__PURE__*/React.createElement(Stenograph, {
     nextTarget: nextTarget,
-    state: state
+    state: state,
+    showTarget: showTarget
   }), /*#__PURE__*/React.createElement("p", null, /*#__PURE__*/React.createElement("b", {
     style: {
       fontSize: ".5em",

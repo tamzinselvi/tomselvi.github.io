@@ -7,9 +7,9 @@ export function Stenograph(props) {
 
     if (targetKey.active) {
       return "#333";
-    } else if (isTarget && targetKey.lastActive) {
+    } else if (isTarget && targetKey.lastActive && props.showTarget) {
       return "green";
-    } else if (isTarget) {
+    } else if (isTarget && props.showTarget) {
       return "yellow";
     } else if (targetKey.lastActive) {
       return "teal";
