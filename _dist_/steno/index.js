@@ -93,6 +93,10 @@ const reducer = (state, action) => {
     strokes
   } = state;
 
+  if (action.data?.key && !keys[action.data.key]) {
+    return state;
+  }
+
   switch (action.type) {
     case StenoActionType.KeyDown:
       if (action.data?.key) {

@@ -32,12 +32,21 @@ function App({}) {
     onKeyDown,
     onKeyUp
   } = useSteno();
+  const [lastTargetStart, setLastTargetStart] = useState(new Date().valueOf());
+  const [lastAttempts, setLastAttempts] = useState([]);
   const targetText = state.strokes.length && strokesToText([state.strokes[state.strokes.length - 1]]) || "";
+  const wpm = lastAttempts.length ? Math.round(60000 / (lastAttempts.slice(0, 10).reduce((prev, curr) => prev + curr, 0) / Math.min(lastAttempts.length, 10))) : 0;
+  useEffect(() => {
+    const targetText = state.strokes.length && strokesToText([state.strokes[state.strokes.length - 1]]) || "";
 
-  if (nextTarget.text === targetText) {
-    setNextTarget(findRandomEntry(difficultyMin, difficultyMax));
-  }
-
+    if (nextTarget.text === targetText) {
+      setNextTarget(findRandomEntry(difficultyMin, difficultyMax));
+      const nextTargetStart = new Date().valueOf();
+      lastAttempts.splice(0, 1, nextTargetStart - lastTargetStart);
+      setLastAttempts(lastAttempts);
+      setLastTargetStart(nextTargetStart);
+    }
+  }, [state, nextTarget]);
   useEffect(() => {
     const kd = ev => {
       const char = ev.key;
@@ -112,7 +121,10 @@ function App({}) {
   return /*#__PURE__*/React.createElement("div", {
     className: "App"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "App-controls"
+    className: "App-controls",
+    style: {
+      height: 40
+    }
   }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "difficulty min"), " ", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("input", {
     onChange: onChangeDifficultyMin,
     type: "range",
@@ -137,7 +149,7 @@ function App({}) {
     onChange: onChangeShowCombinations,
     type: "checkbox",
     checked: showCombinations
-  }), " ", /*#__PURE__*/React.createElement("br", null))), /*#__PURE__*/React.createElement("header", {
+  }), " ", /*#__PURE__*/React.createElement("br", null)), /*#__PURE__*/React.createElement("div", null, wpm, " WPM")), /*#__PURE__*/React.createElement("header", {
     className: "App-header"
   }, /*#__PURE__*/React.createElement(Stenograph, {
     nextTarget: nextTarget,
@@ -145,17 +157,31 @@ function App({}) {
     showTarget: showTarget,
     showKeys: showKeys,
     showCombinations: showCombinations
-  }), /*#__PURE__*/React.createElement("p", null, /*#__PURE__*/React.createElement("b", {
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "App-controls",
+    style: {
+      width: '100%',
+      marginTop: '1em'
+    }
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("b", {
     style: {
       fontSize: ".5em",
       textDecoration: 'underline'
     }
-  }, "Target"), " ", /*#__PURE__*/React.createElement("br", null), nextTarget.text, " ", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("b", {
+  }, "Target"), " ", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: "3em"
+    }
+  }, nextTarget.text), " ", /*#__PURE__*/React.createElement("br", null)), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("b", {
     style: {
       fontSize: ".5em",
       textDecoration: 'underline'
     }
-  }, "Entry"), " ", /*#__PURE__*/React.createElement("br", null), targetText || /*#__PURE__*/React.createElement("i", null, "no-entry"))));
+  }, "Entry"), " ", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: "3em"
+    }
+  }, targetText || /*#__PURE__*/React.createElement("i", null, "no-entry"))))));
 }
 
 export default App;
