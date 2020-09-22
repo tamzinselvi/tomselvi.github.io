@@ -24,6 +24,8 @@ function App({}) {
   const [difficulty, setDifficulty] = useState(3);
   const [nextTarget, setNextTarget] = useState(findRandomEntry(difficulty));
   const [showTarget, setShowTarget] = useState(true);
+  const [showCombinations, setShowCombinations] = useState(true);
+  const [showKeys, setShowKeys] = useState(true);
   const {
     state,
     onKeyDown,
@@ -100,26 +102,40 @@ function App({}) {
 
   const onChangeShowTarget = e => setShowTarget(e.target.checked);
 
+  const onChangeShowKeys = e => setShowKeys(e.target.checked);
+
+  const onChangeShowCombinations = e => setShowCombinations(e.target.checked);
+
   return /*#__PURE__*/React.createElement("div", {
     className: "App"
-  }, /*#__PURE__*/React.createElement("label", null, "difficulty"), " ", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("input", {
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "App-controls"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "difficulty"), " ", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("input", {
     onChange: onChangeDifficulty,
     type: "range",
     min: "3",
     max: "12",
     value: difficulty
-  }), " ", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("label", null, "show target"), " ", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("input", {
+  }), " ", /*#__PURE__*/React.createElement("br", null)), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "show target"), " ", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("input", {
     onChange: onChangeShowTarget,
     type: "checkbox",
-    min: "1",
-    max: "12",
     checked: showTarget
-  }), " ", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("header", {
+  }), " ", /*#__PURE__*/React.createElement("br", null)), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "show keys"), " ", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("input", {
+    onChange: onChangeShowKeys,
+    type: "checkbox",
+    checked: showKeys
+  }), " ", /*#__PURE__*/React.createElement("br", null)), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "show combinations"), " ", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("input", {
+    onChange: onChangeShowCombinations,
+    type: "checkbox",
+    checked: showCombinations
+  }), " ", /*#__PURE__*/React.createElement("br", null))), /*#__PURE__*/React.createElement("header", {
     className: "App-header"
   }, /*#__PURE__*/React.createElement(Stenograph, {
     nextTarget: nextTarget,
     state: state,
-    showTarget: showTarget
+    showTarget: showTarget,
+    showKeys: showKeys,
+    showCombinations: showCombinations
   }), /*#__PURE__*/React.createElement("p", null, /*#__PURE__*/React.createElement("b", {
     style: {
       fontSize: ".5em",
