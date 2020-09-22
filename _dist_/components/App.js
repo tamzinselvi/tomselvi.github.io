@@ -5,12 +5,12 @@ import { Keys, useSteno, strokesToText, keysFromChars, keyToChar } from '../sten
 import { Stenograph } from './Stenograph.js';
 const entries = Object.keys(config.dictionaries[0]);
 
-const findRandomEntry = difficulty => {
+const findRandomEntry = (difficultyMin, difficultyMax) => {
   const randomEntry = entries[Math.round(Math.random() * (entries.length - 1))];
   const val = config.dictionaries[0][randomEntry];
 
-  if (!new RegExp(`^[a-zA-Z]{${difficulty}}$`).test(randomEntry)) {
-    return findRandomEntry(difficulty);
+  if (!new RegExp(`^[a-zA-Z]{${difficultyMin},${difficultyMax}}$`).test(randomEntry)) {
+    return findRandomEntry(difficultyMin, difficultyMax);
   }
 
   return {
@@ -21,8 +21,9 @@ const findRandomEntry = difficulty => {
 
 function App({}) {
   const [down, setDown] = useState({});
-  const [difficulty, setDifficulty] = useState(3);
-  const [nextTarget, setNextTarget] = useState(findRandomEntry(difficulty));
+  const [difficultyMin, setDifficultyMin] = useState(3);
+  const [difficultyMax, setDifficultyMax] = useState(3);
+  const [nextTarget, setNextTarget] = useState(findRandomEntry(difficultyMin, difficultyMax));
   const [showTarget, setShowTarget] = useState(true);
   const [showCombinations, setShowCombinations] = useState(true);
   const [showKeys, setShowKeys] = useState(true);
@@ -34,7 +35,7 @@ function App({}) {
   const targetText = state.strokes.length && strokesToText([state.strokes[state.strokes.length - 1]]) || "";
 
   if (nextTarget.text === targetText) {
-    setNextTarget(findRandomEntry(difficulty));
+    setNextTarget(findRandomEntry(difficultyMin, difficultyMax));
   }
 
   useEffect(() => {
@@ -98,7 +99,9 @@ function App({}) {
     className: "App-keys-row"
   }, [Keys.InitialA, Keys.InitialO, Keys.FinalE, Keys.FinalU].map(key => renderKey(key)));
 
-  const onChangeDifficulty = e => setDifficulty(parseInt(e.target.value));
+  const onChangeDifficultyMin = e => setDifficultyMin(parseInt(e.target.value));
+
+  const onChangeDifficultyMax = e => setDifficultyMax(parseInt(e.target.value));
 
   const onChangeShowTarget = e => setShowTarget(e.target.checked);
 
@@ -110,12 +113,18 @@ function App({}) {
     className: "App"
   }, /*#__PURE__*/React.createElement("div", {
     className: "App-controls"
-  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "difficulty"), " ", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("input", {
-    onChange: onChangeDifficulty,
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "difficulty min"), " ", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("input", {
+    onChange: onChangeDifficultyMin,
     type: "range",
     min: "3",
     max: "12",
-    value: difficulty
+    value: difficultyMin
+  }), " ", /*#__PURE__*/React.createElement("br", null)), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "difficulty max"), " ", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("input", {
+    onChange: onChangeDifficultyMax,
+    type: "range",
+    min: "3",
+    max: "12",
+    value: difficultyMax
   }), " ", /*#__PURE__*/React.createElement("br", null)), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "show target"), " ", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("input", {
     onChange: onChangeShowTarget,
     type: "checkbox",
